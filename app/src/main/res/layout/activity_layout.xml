@@ -10,9 +10,7 @@
       android:layout_height="360dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
-      android:paddingStart="32dp"
       android:paddingTop="32dp"
-      android:paddingEnd="32dp"
       android:paddingBottom="0dp"
       android:background="@drawable/rounded_background_dark">
 
@@ -22,6 +20,7 @@
         android:layout_height="88dp"
         android:scaleType="centerCrop"
         android:contentDescription="Album cover art"
+        android:layout_marginStart="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,6 +30,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintStart_toEndOf="@id/album_art"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/album_art"
@@ -68,7 +68,9 @@
         android:progressTint="@color/text_white"
         android:secondaryProgressTint="@color/bar_light"
         android:thumbTint="@color/text_white"
-        android:progressBackgroundTint="@color/bar_light"
+        android:progressBackgroundTint="@color/bar_dark"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toBottomOf="@id/album_art"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -77,7 +79,7 @@
         android:id="@+id/current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:text="2:12"
         android:textColor="@color/text_white"
@@ -90,10 +92,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         android:text="5:11"
         android:textColor="@color/text_white"
         android:paddingEnd="10dp"
         android:textSize="24sp"
+        android:fontFamily="google_sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progress_slider" />
 

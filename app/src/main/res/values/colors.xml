@@ -8,9 +8,9 @@
   <color name="black">#FF000000</color>
   <color name="white">#FFFFFFFF</color>
 
-  <color name="background_dark">#232140</color>
-  <color name="selected_blue">#00a2f7</color>
-  <color name="bar_light">#9f9f9f</color>
-  <color name="bar_dark">#586066</color>
+  <color name="background_dark">#2e3240</color>
+  <color name="selected_blue">#004a77</color>
+  <color name="bar_light">#96989f</color>
+  <color name="bar_dark">#585b66</color>
   <color name="text_white">#ffffff</color>
 </resources>

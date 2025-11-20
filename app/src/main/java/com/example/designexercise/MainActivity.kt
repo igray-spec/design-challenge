@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import kotlin.math.min
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -96,9 +97,11 @@ class MainActivity : ComponentActivity() {
         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
       }
     )
+    findViewById<SeekBar>(R.id.progress_slider).apply {
+      setSecondaryProgress((max / 2.0).toInt())
+    }
 
     renderCurrentTrack()
-
   }
 
   private fun renderCurrentTrack() {
@@ -110,6 +113,7 @@ class MainActivity : ComponentActivity() {
     findViewById<SeekBar>(R.id.progress_slider).apply {
       max = currentTrack.durationMs.toInt()
       progress = state.currentPlayMs.toInt()
+      secondaryProgress = min(state.currentPlayMs + 50000, currentTrack.durationMs).toInt()
     }
     playPauseButton.apply {
       setImageResource(if (state.isPlaying) R.drawable.pause_48px else R.drawable.play_arrow_48px)
@@ -182,6 +186,7 @@ class MainActivity : ComponentActivity() {
         val newTime = state.currentPlayMs + 1000
         state.currentPlayMs = newTime
         seekBar.progress = newTime.toInt()
+        seekBar.secondaryProgress = (newTime + 50000).toInt()
         findViewById<TextView>(R.id.current_time).text = formatTime(newTime.toLong())
         handler.postDelayed(updateSeekBarRunnable, 1000)
       } else {
