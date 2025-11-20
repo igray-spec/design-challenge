@@ -8,6 +8,7 @@ import android.animation.PropertyValuesHolder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -30,14 +31,13 @@ class MainActivity : ComponentActivity() {
 
   private val state = State()
 
-  // Data Structure for Track
   class Track(
     val title: String,
     val artists: String,
     val durationMs: Long,
     val albumCoverResId: Int,
   ) {
-    var isFavorited = false
+    var isFavorite = false
   }
 
   private val tracks = listOf(
@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
     findViewById<SeekBar>(R.id.progress_slider).setOnSeekBarChangeListener(
       object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+          Log.d("ilan", "onProgressChanged: prog = $progress, fromUser = $fromUser")
           findViewById<TextView>(R.id.current_time).text = formatTime(progress.toLong())
           if (fromUser) {
             state.currentPlayMs = progress.toLong()
@@ -104,20 +105,18 @@ class MainActivity : ComponentActivity() {
     findViewById<ImageView>(R.id.album_art).setImageResource(currentTrack.albumCoverResId)
     findViewById<TextView>(R.id.track_title).text = currentTrack.title
     findViewById<TextView>(R.id.artist_name).text = currentTrack.artists
-    findViewById<TextView>(R.id.current_time).text = formatTime(0)
+    findViewById<TextView>(R.id.current_time).text = formatTime(state.currentPlayMs)
     findViewById<TextView>(R.id.track_duration).text = formatTime(currentTrack.durationMs)
     findViewById<SeekBar>(R.id.progress_slider).apply {
       max = currentTrack.durationMs.toInt()
       progress = state.currentPlayMs.toInt()
     }
-    val iconRes = if (state.isPlaying) R.drawable.pause_48px else R.drawable.play_arrow_48px
-    val contentDesc = if (state.isPlaying) "Pause playback" else "Play playback"
     playPauseButton.apply {
-      setImageResource(iconRes)
-      contentDescription = contentDesc
+      setImageResource(if (state.isPlaying) R.drawable.pause_48px else R.drawable.play_arrow_48px)
+      contentDescription = if (state.isPlaying) "Pause playback" else "Play playback"
     }
     likeButton.setImageResource(
-      if (currentTrack.isFavorited) {
+      if (currentTrack.isFavorite) {
         R.drawable.heart_checked
       } else {
         R.drawable.fitbit_heart_rate_48px
@@ -176,16 +175,19 @@ class MainActivity : ComponentActivity() {
 
   private val updateSeekBarRunnable: Runnable = Runnable {
     // Check if playback is active (important for stopping the timer)
+    Log.d("ilan", "updateSeekBarRunnable: isPlaying = " + state.isPlaying)
     if (state.isPlaying) {
       val seekBar = findViewById<SeekBar>(R.id.progress_slider)
       if (seekBar.progress < seekBar.max) {
-        val newTime = seekBar.progress + 1000
-        seekBar.progress = newTime
+        val newTime = state.currentPlayMs + 1000
+        state.currentPlayMs = newTime
+        seekBar.progress = newTime.toInt()
         findViewById<TextView>(R.id.current_time).text = formatTime(newTime.toLong())
         handler.postDelayed(updateSeekBarRunnable, 1000)
       } else {
         if (state.trackIndex < (tracks.size - 1)) {
           playNextTrack()
+          handler.postDelayed(updateSeekBarRunnable, 1000)
         } else {
           togglePlayback()
         }
@@ -196,7 +198,7 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun toggleLike() {
-    currentTrack.isFavorited = !currentTrack.isFavorited
+    currentTrack.isFavorite = !currentTrack.isFavorite
     renderCurrentTrack()
 
     // Add Scale Animation for Pop Effect (Feel & Motion)
@@ -208,11 +210,7 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun playNextTrack() {
-    state.trackIndex = if (state.isRepeat) {
-      Random.nextInt(tracks.size)
-    } else {
-      state.trackIndex + 1
-    }
+    state.trackIndex++
     state.currentPlayMs = 0
     renderCurrentTrack()
   }
